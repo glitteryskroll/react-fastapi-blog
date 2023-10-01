@@ -1,6 +1,5 @@
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, FileResponse, Response
 from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
 from configurations import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
@@ -9,7 +8,6 @@ from sqlalchemy.orm import sessionmaker
 from passlib.context import CryptContext
 from datetime import timedelta, datetime
 from middlewares import token_middleware, token_and_body_middleware
-
 from api.crud.user_repository import create_user, get_user_by_email, get_db, get_user_by_id, deleteUser
 
 import base64
@@ -24,7 +22,6 @@ router = APIRouter()
 auth_router = APIRouter()
 
 templates = Jinja2Templates(directory="templates")
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -117,6 +114,62 @@ async def login_for_access_token(form_data: UserAuth):
 
     return response
 
+@router.post("/info", response_class=HTMLResponse)
+async def read_root(token_data: dict = Depends(token_middleware)):
+    user_data = get_user_by_email(token_data)
+    user_data = user_data.as_dict()
+    user_data.pop('password_hash')
+    user_data.pop('online')
+    response = JSONResponse(content={"user": user_data})
+    return response
 
+
+@router.post("/delete", response_class=HTMLResponse)
+async def read_root(token_data: dict = Depends(token_middleware)):
+    user_data = deleteUser(token_data)
+    response = JSONResponse(content={"deletedUser": user_data})
+    return response
+
+@router.get("/avatar/{email}")
+async def get_image_file(email: str):
+    base64_data = get_user_by_email(email).avatar
+    binary_data = base64.b64decode(base64_data)
+
+    return Response(content=binary_data, media_type="image/png")
+
+
+@router.get("/profile", response_class=HTMLResponse)
+async def read_root(request: Request, token_data: dict = Depends(token_middleware), db: Session = Depends(get_db)):
+    user_data = get_user_by_email(token_data)
+    user_posts = db.query(Post).filter(Post.user_id == user_data['user_id']).all()
+    for post in user_posts:
+        post_id = post.post_id
+        db = next(get_database())
+        comments = db.query(Comment).filter(Comment.post_id == post_id).all()
+        for comment in comments:
+            user = get_user_by_id(comment.user_id)
+            comment.avatar = user['avatar']
+            comment.first_name = user['first_name']
+            comment.last_name = user['last_name']
+        post.comments = comments
+
+    return templates.TemplateResponse("profile.html",{"request": request, "user_data": user_data, "posts": user_posts})
+
+
+@router.post("/edit-profile")
+async def edit_profile(data: dict = Depends(token_and_body_middleware), db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == data['token_data']).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    user.first_name = data['body']['name']
+    user.last_name = data['body']['last_name']
+    user.password = pwd_context.hash(data['body']['password'])
+    user.email = data['body']['email']
+    if data['body']['avatar'] != False:
+        user.avatar = data['body']['avatar']
+    db.commit()
+
+    return JSONResponse(content={"message": "Profile updated successfully"})
 
 router.include_router(auth_router)
