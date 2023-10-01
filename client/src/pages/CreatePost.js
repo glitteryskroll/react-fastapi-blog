@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import '../styles/css/style.css'; // Ensure the correct path to your CSS file
 import Header from '../components/Header';
 import { addPost } from '../api/PostApi';
+import { Link } from 'react-router-dom';
+import { FEED_ROUTE } from '../utils/consts';
 const CreatePost = () => {
     const [postHeader, setPostHeader] = useState()
     const [postText, setPostText] = useState()
@@ -14,6 +16,9 @@ const CreatePost = () => {
     <div>
       <Header />
       <h1 className="admin-title">Создание поста</h1>
+      <div className="back-btn">
+            <Link to="#" onClick={() => window.history.back()}>Назад</Link>
+            </div>
       <section className="create-post-container">
         <form action="" onSubmit={handleCreatePost} className="create-post-form">
           <input onChange={(e)=> setPostHeader(e.target.value)} type="text" placeholder="Заголовок" />

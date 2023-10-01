@@ -45,12 +45,12 @@ export const updateUser = async (name, lastName, email, password, avatar) => {
       }
 }
 
-export const authUser = (email, password) => {
+export const authUser = async (email, password) => {
     const data = {
         email,
         password
     };
-    fetch(apiUrl + '/user/login', {
+    return await fetch(apiUrl + '/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -60,15 +60,15 @@ export const authUser = (email, password) => {
       })
     .then(response => response.json())
     .then(data => {
-        console.log('Response from server:', data);
+        return true;
     })
     .catch(error => {
         console.error('Error:', error);
     });
 };
 
-export const deleteUser = () => {
-  fetch(apiUrl + '/user/delete', {
+export const deleteUser = async () => {
+  return await fetch(apiUrl + '/user/delete', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -84,18 +84,21 @@ export const deleteUser = () => {
   });
 };
 
-export const registerUser = (formData) => {
-  fetch(apiUrl + '/user/registration', {
+export const registerUser = async (formData) => {
+  return await fetch(apiUrl + '/user/registration', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(formData)
   })
-    .then(response => response.json())
-    .then(data => {
-      // Handle the response from the backend
-      console.log('Registration successful!', data);
+    .then((response)=>{
+        if (response.status == 200){
+          return true
+        }
+        else{
+          return false
+        }
     })
     .catch(error => {
       console.error('Error registering:', error);

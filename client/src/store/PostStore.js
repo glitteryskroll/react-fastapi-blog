@@ -15,7 +15,7 @@ class PostStore {
     this._posts  = Posts;
   }
 
-  setOnePost(Post) {
+  setPost(Post) {
     this._post = Post;
   }
 

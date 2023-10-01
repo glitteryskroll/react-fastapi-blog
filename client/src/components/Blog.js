@@ -1,27 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { getAvatarUrl } from '../api/UserApi';
+import { formatDate } from '../utils/functions';
+import { Link } from 'react-router-dom';
+import { AUTH_ROUTE } from '../utils/consts';
+import { deletePost } from '../api/PostApi';
 
 const Blog = (props) => {
     const post = props.post;
+    const admin = props.admin;
     const avatarUrl = getAvatarUrl(post.email);
-    const formatDate = (post_date) =>{
-        const date = new Date(post_date);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const seconds = String(date.getSeconds()).padStart(2, '0');
-
-        const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-        return formattedDate
+    const [removed, setRemoved] = useState(false);
+    const removePost = async (event) =>{
+        event.preventDefault();
+        await deletePost(post.post_id);
+        setRemoved(true);
     }
-    const openSettings = async () =>{
+
+    const openSettings = async (event) =>{
+        event.preventDefault();
         document.getElementById('settings-post-container-' + post.post_id).classList.toggle("active")
     }
   return (
+    <div>
+    { !removed ? 
+    <Link to={'/post/' + post.post_id}>
     <div className="feed-item-container">
-        <div className="feed-item" href="./post-page.html">
+        <div className="feed-item" >
             <div className="feed-item-info">
                 <div className="feed-item-content">
                     <h1>{post.post_header}</h1>
@@ -29,15 +33,18 @@ const Blog = (props) => {
                 </div>
                 <div className="feed-item-user-info">
                     <div className="user-img">
-                        {!avatarUrl ? 
+                        {avatarUrl ? 
                             <img src={avatarUrl} alt="" />
                                     :
                             <img src="./img/nophoto.png"/>
                         }
                     </div>
                     <div className="user-info">
-                        <div className="settings-post-btn" id={'open-settings-post-btn-' + post.post_id} onClick={openSettings}><img src="./img/settings-feed.svg" alt="settings" /></div>
-
+                        {admin ? 
+                            <div className="settings-post-btn" id={'open-settings-post-btn-' + post.post_id} onClick={openSettings}><img src="./img/settings-feed.svg" alt="settings" /></div>
+                            :
+                            <></>
+                        }   
                         <span>{post.first_name} {post.last_name}</span>
                         <span className="date-message">{formatDate(post.post_date)}</span>
                     </div>
@@ -45,15 +52,24 @@ const Blog = (props) => {
             </div>
             <div className="feed-item-comments">
                 <img src="./img/comments.svg" alt="" />
-                <span>54</span>
+                <span>{post.comm_count}</span>
             </div>
         </div>
-        <div className="settings-post" id={'settings-post-container-' + post.post_id}>
-            <span className='edit'>Редактировать</span>
-            <span className="delete">Удалить</span>
-        </div>
+        {admin ?
+            <div className="settings-post" id={'settings-post-container-' + post.post_id}>
+                <Link to={AUTH_ROUTE}className='edit'><span >Редактировать</span></Link>
+                <button className="delete" onClick={removePost}>Удалить</button>
+            </div>
+            :
+            ''
+        }
+        
     </div>
-    
+    </Link>
+    :
+    ''
+    }
+    </div>
   );
 };
 

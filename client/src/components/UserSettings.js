@@ -2,6 +2,8 @@ import React, { useContext, useState } from 'react';
 import { Context } from '../index';
 import config from '../config';
 import { deleteUser, getAvatarUrl, updateUser } from '../api/UserApi';
+import { Link } from 'react-router-dom';
+import { FEED_ROUTE } from '../utils/consts';
 
 
 const UserSettings = () => {
@@ -62,13 +64,13 @@ const UserSettings = () => {
     return (
         <div>
             <div className="back-btn">
-            <a href="feed.html">Назад</a>
+                <Link to="#" onClick={() => window.history.back()}>Назад</Link>
             </div>
             <section className="settings-section">
             <div className="settings-container">
             <form onSubmit={editUserProfile}>
                 <h1 className="admin-title">Настройки</h1>
-                <div className="user-info">
+                <div className="user-info" style={{flexDirection:'column'}}>
                 <div className="user-avatar">
                     <img src={avatar} alt="" className="user-avatar-img" />
                     <div className="edit-container">
@@ -77,7 +79,7 @@ const UserSettings = () => {
                     </div>
                     
                 </div>
-                <div className="user-name">
+                <div className="user-name" style={{fontSize:'25px'}}>
                     <span id="settings-name">{name + ' ' + lastName}</span> 
                     <input placeholder="Имя" id="settings-name-input" onInput={(e) => setName(e.target.value)} className="settings-form-name-edit" type="text" style={{display:'none'}} ></input>
                     <input placeholder="Фамилия" id="settings-lastName-input" onInput={(e) => setLastName(e.target.value)} className="settings-form-name-edit" type="text" style={{display:'none', marginLeft:'5px'}} ></input>

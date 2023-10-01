@@ -1,6 +1,8 @@
 import React, { useContext } from 'react';
 import { Context } from '../index';
 import { getAvatarUrl } from '../api/UserApi';
+import { Link } from 'react-router-dom';
+import { SETTINGS_ROUTE } from '../utils/consts';
 
 const Header = () => {
   const {userStore} = useContext(Context);
@@ -15,7 +17,7 @@ const Header = () => {
               </div>
               <span>{user.first_name} {user.last_name}</span>
               <div className="user-setting-btn" id="setting-btn">
-                  <a href="settings.html"><img src="./img/settings.svg" alt=""/></a>
+                  <Link to={SETTINGS_ROUTE} ><img src="./img/settings.svg" alt=""/></Link>
               </div>
       </div>
     </div>

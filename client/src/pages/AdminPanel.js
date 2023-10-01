@@ -8,13 +8,13 @@ import BlogsFeed from '../components/BlogsFeed';
 
 import '../styles/css/style.css'; // Ensure the correct path to your CSS file
 import { CREATE_POST_ROUTE } from '../utils/consts';
-const FeedApp = (props) => {
+const AdminPanel = (props) => {
   const apiUrl = props.apiUrl;
-  const admin = props.admin;
   const {userStore} = useContext(Context);
   const [userData, setUserData] = useState()
   const [loading, setLoading] = useState(true)
   
+
   async function setUser() {
     const data = await profile();
     userStore.setUserData(data);
@@ -42,15 +42,11 @@ const FeedApp = (props) => {
           <Header>
           </Header>
           <section className="feed-section">
-              {admin ? 
-                <Link to={CREATE_POST_ROUTE} class="feed-admin-tools">
-                  Создать пост
-                </Link>  
-                :
-                <></>
-              }
-              <BlogsFeed admin={admin} className="feed-container">
-              </BlogsFeed>
+          <Link to={CREATE_POST_ROUTE} class="feed-admin-tools">
+              Создать пост
+          </Link>
+            <BlogsFeed className="feed-container">
+            </BlogsFeed>
           </section>
         </div>
         }
@@ -59,4 +55,4 @@ const FeedApp = (props) => {
   );
 };
 
-export default FeedApp;
+export default AdminPanel;

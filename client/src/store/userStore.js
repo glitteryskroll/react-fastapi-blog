@@ -10,6 +10,7 @@ class UserStore {
 
   setUserData(userData) {
     this._user = userData;
+    this._isAuth = true;
   }
 
   get isAuth(){

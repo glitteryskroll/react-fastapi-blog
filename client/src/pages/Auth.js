@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import '../styles/css/style.css'; // Импортируем стили
 import { authUser } from '../api/UserApi';
+import { Link } from 'react-router-dom';
+import { FEED_ROUTE, REGISTER_ROUTE } from '../utils/consts';
 
 const Auth = (props) => {
   const apiUrl = props.apiUrl
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    
-
     // Отправляем POST запрос на бэкенд
-    authUser(email, password)
+    const result = await authUser(email, password);
+    if (result){
+      window.location.href = FEED_ROUTE;
+    }
   };
 
   return (
@@ -39,7 +42,7 @@ const Auth = (props) => {
             <button type="submit" className="auth-btn">Войти</button>
           </form>
           <span>
-            Нет аккаунта? <a href="registration.html">Создать</a>
+            Нет аккаунта? <Link to={REGISTER_ROUTE}>Создать</Link>
           </span>
         </div>
       </section>

@@ -3,24 +3,20 @@ import Blog from './Blog'
 import { Context } from '..';
 import { fetchPosts } from '../api/PostApi';
 
-const BlogsFeed = () => {
+const BlogsFeed = (props) => {
   const {postStore} = useContext(Context);
   const [loading, setLoading] = useState(false)
   const [posts, addPosts] = useState([])
+  const admin = props.admin;
   async function setPosts() {
     const data = await fetchPosts();
     postStore.setPosts(data);
     addPosts(data);
-    console.log(postStore.posts);
     setLoading(true);
   }
   useEffect(() => {
     setPosts();
   }, []);
-
-  useEffect(()=>{
-    console.log(posts)
-  }, [posts])
 
   return (
     <section className="feed-container">
@@ -36,7 +32,7 @@ const BlogsFeed = () => {
       {loading ? 
       <>
       {posts.map((post, index) =>(
-        <Blog post={post} key={index} />
+        <Blog admin={admin} post={post} key={index} />
       )
       )}
       </>
