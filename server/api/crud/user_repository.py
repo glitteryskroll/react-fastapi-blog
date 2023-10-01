@@ -57,7 +57,7 @@ def get_user_by_email(email):
 
     return user
 
-def deleteUser(email):
+def delete_user(email):
     db = next(get_db())
     user = db.query(User).filter(User.email == email).first()
     db.delete(user)
@@ -70,3 +70,17 @@ def get_user_by_post(post_id):
     user = post.user_id
     return user
 
+def edit_user(emailA, emailB, first_name, last_name, password, avatar):
+    db = next(get_db())
+    user = db.query(User).filter(User.email == emailA).first()
+    if not user:
+        return None
+
+    user.first_name = first_name
+    user.last_name = last_name
+    user.password = password
+    user.email = emailB
+    if avatar != False:
+        user.avatar = avatar
+    db.commit()
+    return user

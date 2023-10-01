@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from passlib.context import CryptContext
 from datetime import timedelta, datetime
 from middlewares import token_middleware, token_and_body_middleware
-from api.crud.user_repository import create_user, get_user_by_email, get_db, get_user_by_id, deleteUser
+from api.crud.user_repository import create_user, get_user_by_email, get_db, get_user_by_id, delete_user, edit_user
 
 import base64
 import jwt
@@ -126,7 +126,7 @@ async def read_root(token_data: dict = Depends(token_middleware)):
 
 @router.post("/delete", response_class=HTMLResponse)
 async def read_root(token_data: dict = Depends(token_middleware)):
-    user_data = deleteUser(token_data)
+    user_data = delete_user(token_data)
     response = JSONResponse(content={"deletedUser": user_data})
     return response
 
@@ -157,19 +157,16 @@ async def read_root(request: Request, token_data: dict = Depends(token_middlewar
 
 
 @router.post("/edit-profile")
-async def edit_profile(data: dict = Depends(token_and_body_middleware), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == data['token_data']).first()
-    if not user:
+async def edit_profile(data: dict = Depends(token_and_body_middleware)):
+    emailA = data['token_data']
+    emailB = data['body']['email']
+    first_name = data['body']['name']
+    last_name = data['body']['last_name']
+    password = pwd_context.hash(data['body']['password'])
+    avatar = data['body']['avatar']
+    user = edit_user(emailA, emailB, first_name, last_name, password,avatar)
+    if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-
-    user.first_name = data['body']['name']
-    user.last_name = data['body']['last_name']
-    user.password = pwd_context.hash(data['body']['password'])
-    user.email = data['body']['email']
-    if data['body']['avatar'] != False:
-        user.avatar = data['body']['avatar']
-    db.commit()
-
     return JSONResponse(content={"message": "Profile updated successfully"})
 
 router.include_router(auth_router)
