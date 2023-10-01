@@ -1,0 +1,149 @@
+@font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/montserrat-v26-cyrillic_latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  }
+  /* montserrat-600 - cyrillic_latin */
+  @font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 600;
+    src: url('../fonts/montserrat-v26-cyrillic_latin-600.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  }
+  /* montserrat-700 - cyrillic_latin */
+  @font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 700;
+    src: url('../fonts/montserrat-v26-cyrillic_latin-700.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  }
+  @font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 500;
+    src: url('../fonts/montserrat-v26-cyrillic_latin-500.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  }
+*{
+    margin: 0;
+    padding: 0;
+}
+
+a{
+    text-decoration: none;
+    color: #569DFF;
+
+}
+a:focus{
+    color: #569DFF;
+}
+
+button {
+    padding: 0;
+    border: none;
+    font: inherit;
+    color: inherit;
+    background-color: transparent;
+    /* отображаем курсор в виде руки при наведении; некоторые
+    считают, что необходимо оставлять стрелочный вид для кнопок */
+    cursor: pointer;
+  }
+
+
+::-webkit-input-placeholder { /* WebKit browsers */
+    color:    #6B6B6B;
+ }
+ :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:    #6B6B6B;
+ }
+ ::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:    #6B6B6B;
+ }
+ :-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:    #6B6B6B;
+ }
+
+ input::-webkit-input-placeholder       {opacity: 1; transition: opacity 0.3s ease;}
+ input::-moz-placeholder                {opacity: 1; transition: opacity 0.3s ease;}
+ input:-moz-placeholder                 {opacity: 1; transition: opacity 0.3s ease;}
+ input:-ms-input-placeholder            {opacity: 1; transition: opacity 0.3s ease;}
+ input:focus::-webkit-input-placeholder {opacity: 0; transition: opacity 0.3s ease;}
+ input:focus::-moz-placeholder          {opacity: 0; transition: opacity 0.3s ease;}
+ input:focus:-moz-placeholder           {opacity: 0; transition: opacity 0.3s ease;}
+ input:focus:-ms-input-placeholder      {opacity: 0; transition: opacity 0.3s ease;}
+
+
+body{
+    background-color: #F2F2F2;
+    font-family: "Montserrat";
+    font-weight: 600;
+}
+
+.auth-section{
+    display: flex;
+    align-items: center;
+    height: 100vh;
+}
+
+.auth-container{
+    width: 350px;
+    border-radius: 10px;
+    height: 350px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0px 0px 67px -45px rgba(0, 0, 0, 1);
+    border-radius: 20px;
+    background: #FFF;
+}
+
+.auth-container h3{
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.form-auth input{
+    margin-bottom: 15px;
+    outline: none;
+    border-radius: 10px;
+    border: none;
+    background: #F5F5F5;
+    padding: 4px 13px;
+    height: 30px;
+    font-family: Montserrat;
+    font-weight: 500;
+}
+
+
+.form-auth{
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-btn{
+    width: 233px;
+    padding: 14px 0px 13px 0px;
+    border-radius: 10px;
+    background: #569DFF;
+    color: white;
+    margin-top: 30px;
+}
+
+
+.auth-container span{
+    margin-top: 20px;    
+}
+
+@media (max-width: 770px){
+    .auth-section{
+        height: 90vh;
+        display: flex;
+        align-items: center;
+    }
+
+}
