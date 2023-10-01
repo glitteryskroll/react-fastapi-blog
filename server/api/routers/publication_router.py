@@ -1,7 +1,7 @@
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from api.crud.user_repository import create_user, get_user_by_email, get_db, get_user_by_id
-from api.crud.publications_repository import get_posts, get_post, delete_post, edit_post
+from api.crud.publications_repository import get_posts, get_post, delete_post, edit_post, add_post
 from middlewares import token_middleware, token_and_body_middleware
 
 from db import User, Comment, Post, engine, db_name, get_db as get_database
@@ -12,30 +12,23 @@ from typing import List
 router =  APIRouter()
 
 @router.post("/add-post")
-async def add_post(data: dict = Depends(token_and_body_middleware), db: Session = Depends(get_db)):
-    user_id = get_user_by_email(data['token_data']).user_id
-    new_post = Post(
-        user_id=user_id,
-        post_header=data['body']['post_header'],
-        post_text=data['body']['post_text']
-    )
-    db.add(new_post)
-    db.commit()
-
+async def create_post(data: dict = Depends(token_and_body_middleware)):
+    email = data['token_data']
+    post_header = data['body']['post_header']
+    post_text = data['body']['post_text']
+    add_post(email, post_header, post_text)
     return {"message": "Post added successfully"}
 
 
 # # Модель для данных поста
 class EditPost(BaseModel):
+    post_header: str
     post_text: str
-    post_images: List[str]
 
 
 # Маршрут для удаления поста
 @router.delete("/posts/{post_id}")
 async def delete_post_route(post_id: int, data: dict = Depends(token_middleware), db: Session = Depends(get_db)):
-    print('id post')
-    print(post_id)
     post = get_post(db, post_id)
     if post is None:
         raise HTTPException(status_code=404, detail="Пост не найден")
@@ -68,7 +61,7 @@ async def edit_post_route(post_id: int, data: dict = Depends(token_and_body_midd
     return {"message": "Пост успешно отредактирован"}
 
 
-# Маршрут для редактирования поста
+# Маршрут для получения информации о постах
 @router.post("/get-posts/{offset}")
 async def get_posts_route(offset: int, data: dict = Depends(token_middleware)):
     print(offset)

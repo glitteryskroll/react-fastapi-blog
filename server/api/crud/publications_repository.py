@@ -1,21 +1,27 @@
 import psycopg2
 from configurations import db_user, db_name, db_host, db_password
 from sqlalchemy.orm import sessionmaker, joinedload
-from db import User, Comment, engine, db_name, Session, Post
+from db import User, Comment, engine, db_name, Session, Post, get_db
 from sqlalchemy import desc
+from .user_repository import get_user_by_email
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 # Функция для получения данных поста по его ID
 def get_post(db, post_id: int):
     post = db.query(Post).filter(Post.post_id == post_id).first()
     return post
+
+def add_post(email, post_header, post_text):
+    db = next(get_db())
+    user_id = get_user_by_email(email).user_id
+    new_post = Post(
+        user_id=user_id,
+        post_header=post_header,
+        post_text=post_text
+    )
+    db.add(new_post)
+    db.commit()
 
 # Функция для получения данных постов
 def get_posts(offset: int):
