@@ -7,6 +7,7 @@ import config from './config';
 import Settings from './pages/Setting';
 import { Context } from './index';
 import { profile } from './api/UserApi';
+import CreatePost from './pages/CreatePost';
 
 const apiUrl = config.backendUrl;
 const App = () => {
@@ -28,6 +29,7 @@ const App = () => {
           <Routes>
             <Route  path="/auth" element={<Auth ></Auth>} />
             <Route  path="/registration" element={<Registration ></Registration>} />  
+            <Route  path="/createpost" element={<CreatePost ></CreatePost>} />  
             <Route  path="/settings" element={<Settings ></Settings>} />
            
           </Routes>
