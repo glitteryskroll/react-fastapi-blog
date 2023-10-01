@@ -3,7 +3,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 
 from api.routers.user_router import router as user_router
-
+from api.routers.publication_router import router as pb_router
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
@@ -22,3 +22,4 @@ app.add_middleware(
 
 templates = Jinja2Templates(directory="templates")
 app.include_router(user_router, prefix="/user")
+app.include_router(user_router, prefix="/post")
