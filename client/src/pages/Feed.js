@@ -6,7 +6,7 @@ import {Context} from '../index'
 import Header from '../components/Header';
 import BlogsFeed from '../components/BlogsFeed';
 
-import '../styles/css/feed.css'; // Ensure the correct path to your CSS file
+import '../styles/css/style.css'; // Ensure the correct path to your CSS file
 const FeedApp = (props) => {
   const apiUrl = props.apiUrl;
   const {userStore} = useContext(Context);
@@ -40,9 +40,13 @@ const FeedApp = (props) => {
         <div>
           <Header>
           </Header>
-
-          <BlogsFeed className="feed-container">
-          </BlogsFeed>
+          <section className="feed-section">
+          <a class="feed-admin-tools" href="./admin.html">
+              Создать пост
+          </a>
+            <BlogsFeed className="feed-container">
+            </BlogsFeed>
+          </section>
         </div>
         }
         

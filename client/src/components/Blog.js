@@ -4,117 +4,55 @@ import { getAvatarUrl } from '../api/UserApi';
 const Blog = (props) => {
     const post = props.post;
     const avatarUrl = getAvatarUrl(post.email);
+    const formatDate = (post_date) =>{
+        const date = new Date(post_date);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
 
+        const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        return formattedDate
+    }
+    const openSettings = async () =>{
+        document.getElementById('settings-post-container-' + post.post_id).classList.toggle("active")
+    }
   return (
-        <div className="message-feed">
-            <div className="item-feed">
-                <div className="user-info">
-                    <div className="user-name">
-                        <div className="user-img">
-                            <img src={avatarUrl} alt=""/>
-                        </div>
-                        <span>{post.first_name} {post.last_name}</span>    
-                    </div>
-                    <div className="date-message">
-                        {post.post_date}
-                    </div>
+    <div className="feed-item-container">
+        <div className="feed-item" href="./post-page.html">
+            <div className="feed-item-info">
+                <div className="feed-item-content">
+                    <h1>{post.post_header}</h1>
+                    <span>{post.post_text}</span>
                 </div>
-                <div className="user-info-adaptive">
+                <div className="feed-item-user-info">
                     <div className="user-img">
-                        <img src={avatarUrl} alt=""/>
+                        {!avatarUrl ? 
+                            <img src={avatarUrl} alt="" />
+                                    :
+                            <img src="./img/nophoto.png"/>
+                        }
                     </div>
-                    <div className="user-name-adaptive">
+                    <div className="user-info">
+                        <div className="settings-post-btn" id={'open-settings-post-btn-' + post.post_id} onClick={openSettings}><img src="./img/settings-feed.svg" alt="settings" /></div>
+
                         <span>{post.first_name} {post.last_name}</span>
-                        <div className="date-message">
-                            {post.post_date}
-                        </div>
+                        <span className="date-message">{formatDate(post.post_date)}</span>
                     </div>
-                </div>
-                <div className="item-feed-title">
-                {post.post_header}
-                </div>
-                <div className="item-feed-text">
-                    {post.post_text.slice(0,200)}
-                </div>
-                <div className="item-feed-more-btn">
-                    Показать ещё
-                </div>
-                <div className="item-feed-comments-btn" id="open-comment-btn">
-                    <span></span>
-                    <img src="./img/comments.svg" alt=""/>
                 </div>
             </div>
-    
-            <div className="item-feed-comments" id="comments-container">
-                <h3>Комментарии</h3>
-    
-                <form action="" className="comment-textarea">
-                    <textarea name="comments" id="" cols="30" rows="10" placeholder="Написать комментарий..."></textarea>
-                    <button className="comment-btn" type="submit">
-                        Отправить
-                    </button>
-                </form>
-    
-                <div className="comment-container">
-                    <div className="comment-item">
-                        <div className="user-info-comment">
-                            <div className="user-name">
-                                <div className="user-img">
-                                    <img src="./img/IMG_5718.JPG" alt=""/>
-                                </div>
-                                <span>Андрей Воронцов</span>    
-                            </div>
-                            <div className="date-message">
-                                28.09.23
-                            </div>
-                        </div>
-                        <div className="user-info-adaptive">
-                            <div className="user-img">
-                                <img src="./img/IMG_5718.JPG" alt=""/>
-                            </div>
-                            <div className="user-name-adaptive">
-                                <span>Андрей Воронцов</span>
-                                <div className="date-message">
-                                    28.09.23
-                                </div>
-                            </div>
-                        </div>
-                        <div className="comment-message">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Error nam earum molestiae pariatur, eius, iste natus animi dolorem, dicta doloribus ex aut. Corporis, est.
-                        </div>
-        
-                    </div>
-
-                    <div className="comment-item">
-                        <div className="user-info-comment">
-                            <div className="user-name">
-                                <div className="user-img">
-                                    <img src="./img/IMG_5718.JPG" alt=""/>
-                                </div>
-                                <span>Андрей Воронцов</span>    
-                            </div>
-                            <div className="date-message">
-                                28.09.23
-                            </div>
-                        </div>
-                        <div className="user-info-adaptive">
-                            <div className="user-img">
-                                <img src="./img/IMG_5718.JPG" alt=""/>
-                            </div>
-                            <div className="user-name-adaptive">
-                                <span>Андрей Воронцов</span>
-                                <div className="date-message">
-                                    28.09.23
-                                </div>
-                            </div>
-                        </div>
-                        <div className="comment-message">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Error nam earum molestiae pariatur, eius, iste natus animi dolorem, dicta doloribus ex aut. Corporis, est.
-                        </div>
-                    </div>
-                </div>
+            <div className="feed-item-comments">
+                <img src="./img/comments.svg" alt="" />
+                <span>54</span>
             </div>
         </div>
+        <div className="settings-post" id={'settings-post-container-' + post.post_id}>
+            <span className='edit'>Редактировать</span>
+            <span className="delete">Удалить</span>
+        </div>
+    </div>
     
   );
 };

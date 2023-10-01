@@ -24,6 +24,15 @@ const BlogsFeed = () => {
 
   return (
     <section className="feed-container">
+      <ul class="pagination-container">
+                <a href="">1</a>
+                <a href="">2</a>
+                <a href="">3</a>
+                <a href="">...</a>
+                <a href="">1000</a>
+
+      </ul>
+      <div className="feed-item-list">
       {loading ? 
       <>
       {posts.map((post, index) =>(
@@ -34,6 +43,7 @@ const BlogsFeed = () => {
       :
       <div></div>
       }
+      </div>      
     </section>
   );
 };

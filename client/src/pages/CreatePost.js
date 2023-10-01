@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../styles/css/admin.css'; // Ensure the correct path to your CSS file
+import '../styles/css/style.css'; // Ensure the correct path to your CSS file
 import Header from '../components/Header';
 import { addPost } from '../api/PostApi';
 const CreatePost = () => {

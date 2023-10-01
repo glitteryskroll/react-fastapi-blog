@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../styles/css/auth.css'; // Импортируем стили
+import '../styles/css/style.css'; // Импортируем стили
 import { authUser } from '../api/UserApi';
 
 const Auth = (props) => {

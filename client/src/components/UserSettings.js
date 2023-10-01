@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react';
-import '../styles/css/settings.css';
 import { Context } from '../index';
 import config from '../config';
 import { deleteUser, getAvatarUrl, updateUser } from '../api/UserApi';

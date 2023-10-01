@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../styles/css/registration.css';
+import '../styles/css/style.css';
 import { registerUser } from '../api/UserApi';
 let passwords = {};
 const Registration = (props) => {
