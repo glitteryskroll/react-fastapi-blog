@@ -25,8 +25,12 @@ const App = () => {
     const data = await profile();
     userStore.setUserData(data);
     setAuth(true);
-    if (data.level == 1){
-      setAdmin(true)
+    try{
+      if (data.level == 1){
+        setAdmin(true)
+      }
+    }
+    catch(e){
     }
     setLoading(false);
   }

@@ -1,19 +1,24 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { getAvatarUrl } from '../api/UserApi';
 import { formatDate } from '../utils/functions';
 import { Link } from 'react-router-dom';
 import { AUTH_ROUTE } from '../utils/consts';
 import { deletePost } from '../api/PostApi';
+import { Context } from '../index';
+
+
 
 const Blog = (props) => {
     const post = props.post;
     const admin = props.admin;
+    const update = props.update;
     const avatarUrl = getAvatarUrl(post.email);
-    const [removed, setRemoved] = useState(false);
     const removePost = async (event) =>{
         event.preventDefault();
+        await openSettings(event);
         await deletePost(post.post_id);
-        setRemoved(true);
+        
+        update(1);
     }
 
     const openSettings = async (event) =>{
@@ -21,8 +26,6 @@ const Blog = (props) => {
         document.getElementById('settings-post-container-' + post.post_id).classList.toggle("active")
     }
   return (
-    <div>
-    { !removed ? 
     <Link to={'/post/' + post.post_id}>
     <div className="feed-item-container">
         <div className="feed-item" >
@@ -66,10 +69,6 @@ const Blog = (props) => {
         
     </div>
     </Link>
-    :
-    ''
-    }
-    </div>
   );
 };
 

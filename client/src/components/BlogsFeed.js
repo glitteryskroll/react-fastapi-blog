@@ -2,37 +2,62 @@ import React, { useContext, useEffect, useState } from 'react';
 import Blog from './Blog'
 import { Context } from '..';
 import { fetchPosts } from '../api/PostApi';
+import Pagination from './Pagination';
+import { observable } from 'mobx';
+
+const deleted = observable({
+    count: 0
+})
 
 const BlogsFeed = (props) => {
-  const {postStore} = useContext(Context);
   const [loading, setLoading] = useState(false)
   const [posts, addPosts] = useState([])
   const admin = props.admin;
+  const {postStore} = useContext(Context)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [update, setUpdate] = useState(0)
+  const handlePageChange = pageNumber => {
+    setCurrentPage(pageNumber);
+    // Здесь можно обновить данные, например, загрузить новую порцию данных для выбранной страницы
+  };
+
   async function setPosts() {
-    const data = await fetchPosts();
-    postStore.setPosts(data);
-    addPosts(data);
+    const data = await fetchPosts(currentPage);
+    postStore.setPosts(data[0]);
+    setTotalPages(Math.ceil(data[1].count / 10));
+    addPosts(data[0]);
     setLoading(true);
   }
+
+  const handleNotifyParent = (number) => {
+      setUpdate(update + number)
+  };
+
   useEffect(() => {
-    setPosts();
-  }, []);
+    setPosts(currentPage);
+  }, [currentPage, update]);
 
   return (
     <section className="feed-container">
+      
+      
       <ul class="pagination-container">
-                <a href="">1</a>
-                <a href="">2</a>
-                <a href="">3</a>
-                <a href="">...</a>
-                <a href="">1000</a>
+        <div>
+          Страница {currentPage}
+        </div>
+        <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
 
       </ul>
       <div className="feed-item-list">
       {loading ? 
       <>
       {posts.map((post, index) =>(
-        <Blog admin={admin} post={post} key={index} />
+        <Blog update={handleNotifyParent} deleted={deleted} admin={admin} post={post} key={index} />
       )
       )}
       </>

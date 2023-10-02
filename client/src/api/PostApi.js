@@ -50,9 +50,8 @@ export const loadComments = async (post_id) => {
     }
 }
 
-export const fetchPosts = async () => {
+export const fetchPosts = async (offset) => {
     try {
-        const offset = 10;
         const response = await axios.post(`${apiUrl}/post/get-posts/${offset}`, null, {
           headers: {
             'Content-Type': 'application/json'
@@ -85,6 +84,25 @@ export const fetchPost = async (post_id) => {
 export const deletePost = async (post_id) => {
   try {
       const response = await axios.post(`${apiUrl}/post/delete/${post_id}`, null, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true  // for sending credentials (cookies)
+      });
+      return response.data;
+      
+    } catch (error) {
+      console.error('Error:', error);
+    }
+}
+
+export const editPost = async (post_id, post_header, post_text) => {
+  try {
+      const data = {
+        post_header: post_header,
+        post_text: post_text
+      }
+      const response = await axios.put(`${apiUrl}/post/update/${post_id}`, data, {
         headers: {
           'Content-Type': 'application/json'
         },

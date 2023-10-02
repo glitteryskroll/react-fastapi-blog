@@ -12,7 +12,8 @@ export const Context = createContext(null);
 root.render(
   <Context.Provider value={{
         userStore: new UserStore(),
-        postStore: new PostStore() }}>
+        postStore: new PostStore()
+         }}>
     <App />
   </Context.Provider>
 );

@@ -107,14 +107,15 @@ a:focus{
 }
 
 .user-img{
-    width: 35px;
-    height: 35px;
+    min-width: 35px;
+    min-height: 35px;
     overflow: hidden;
     border-radius: 100px;
     margin-right: 10px;
 
     img{
-        width: 35px; 
+        width: 35px;
+        height: 35px;
     }
 }
 /* Сообщение новостной ленты */
@@ -229,7 +230,7 @@ a:focus{
     padding: 4px 17px;
     width: fit-content;
     border-radius: 10px;
-    background: #9EBDE8;
+    background: #569DFF;
     color: white;
     margin-left: auto;
     margin-top: 10px;
@@ -586,6 +587,21 @@ a:focus{
     margin-top: 15px;
 }
 
+.edit-form-btn{
+    padding: 10px 20px;
+    width: 230px;
+
+    border-radius: 10px;
+    background: #569DFF;
+    color: white;
+    margin-top: 15px;
+}
+
+.edit-form-btn-container{
+    display: flex;
+    justify-content: center;
+}
+
 .settings-form-btn:disabled{
     padding: 10px 20px;
     width: 230px;
@@ -761,4 +777,358 @@ a:focus{
     .create-post-button{
         background: #569DFF;
     }
+}
+
+
+// Стили для новостной ленты
+
+.feed-container{
+    width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 100px;
+    border-radius: 20px;
+    background: #FFF;
+    box-shadow: 0px 0px 67px -45px rgba(0, 0, 0, 0.25);
+    padding: 46px 56px;
+}
+.pagination-container{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-left: auto;
+    a{
+        color: #989898;
+        &:not(:last-child){
+            margin-right: 5px;
+        }
+    }
+    a:focus{
+        color: #000000;
+    }
+}
+
+.feed-item{
+    width: 100%;
+    border-radius: 10px;
+    background: #ECECEC;
+    color: black;
+    padding: 30px 30px 15px 30px;
+    transition: .3s ease;
+    position: relative;
+    cursor: pointer;
+    &:hover{
+        background-color: #dedede;
+    }
+}
+.feed-item-content{
+    display: flex;
+    flex-direction: column;
+    span{
+        margin-top: 10px;
+    }
+}
+.feed-item-info{
+    display: flex;
+}
+.feed-item-user-info{
+    display: flex;
+    align-items: center;
+    text-wrap: nowrap;
+    margin-left: auto;
+    .date-message{
+        margin-left: 0;
+    }
+    .user-info{
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+    }
+}
+.feed-item-comments{
+    img{
+        width: 20px;
+    }
+    span{
+        color: #666;
+        font-family: Montserrat;
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal;
+        margin-left: 5px;
+    }
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    display: flex;
+    padding: 5px 10px;
+    border-radius: 100px;
+    background: #d7d7d7;
+    margin-top: 15px;
+}
+
+.settings-post-btn{
+    position: absolute;
+    margin-left: auto;
+    width: fit-content;
+    height: 30px;
+    right: 30px;
+    top: 20px;
+    cursor: pointer;
+    z-index: 212;
+}
+
+.feed-item-container{
+    margin-top:30px;
+    display: flex;
+    position: relative;
+}
+.settings-post{
+    
+    position: absolute;
+    right: -200px;
+    top: 30px;
+    display: none;
+    flex-direction: column;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #ECECEC;
+    padding: 10px;
+    .delete{
+        margin-top: 10px;
+        color: white;
+        font-family: Montserrat;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal;
+        background-color: transparent;
+        padding: 3px;
+        background: #b53d3d;
+        border-radius: 5px;
+        text-align: center;
+        cursor: pointer;
+    }
+    .edit{
+        color: white;
+        font-family: Montserrat;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal;
+        background-color: transparent;
+        padding: 3px;
+        background: #569DFF;
+        border-radius: 5px;
+        text-align: center;
+        cursor: pointer;
+    }
+}
+.active{
+    display: flex;
+}
+
+
+
+.feed-admin-tools{
+    position: absolute;
+    left: -200px;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 20px;
+    color: black;
+    border: 1px solid #ECECEC;
+
+}
+
+.feed-section{
+    position: relative;
+    margin: auto;
+    width: fit-content;
+}
+
+@media (max-width: 770px){
+    .feed-container{
+        width: 350px;
+        padding: 20px 5px;
+    }
+    .feed-item-content {
+        h1{
+            font-size: 14px;
+        }
+        span{
+            font-size: 12px;
+        }
+
+    }
+    .user-info{
+        span{
+            font-size: 10px;
+        }
+    }
+    .feed-item{
+        padding: 35px 15px 5px 15px;
+    }
+    .feed-item-user-info{
+        text-wrap: wrap;
+        .user-img{
+            width: 30px;
+            display: flex;
+            height: 30px;
+        }
+    }
+    .settings-post{
+        right: 0;
+        top: -20px;
+    }
+}
+
+@media (max-width: 1110px){
+    .feed-admin-tools{
+        position: absolute;
+        left: 0;
+        top: -70px;
+        border-radius: 10px;
+        background: #ffffff;
+        padding: 20px;
+        color: black;
+    
+    }
+}
+
+//Конец стилей новостной ленты
+
+//Начало стилей для страницы поста
+
+.post-container{
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 100px;
+    border-radius: 20px;
+    background: #FFF;
+    box-shadow: 0px 0px 67px -45px rgba(0, 0, 0, 0.25);
+    padding: 46px 56px;
+
+    .post-title-container{
+        font-size: 24px;
+        margin-top: 30px;
+        display: flex;
+        div{
+            width: fit-content;
+            display: flex;
+            align-items: center;
+            margin-left: 15px;
+            cursor: pointer;
+            img{
+                width: 20px;
+            }
+        }
+        .post-title{
+            display: none;
+            align-items: center;
+        }
+        .active{
+            display: flex;
+        }
+    }
+    .post-content-container{
+        margin-top: 20px;
+        font-size: 16px;
+        display: flex;
+        align-items: start;
+        .post-edit{
+            width: fit-content;
+            margin-left: 15px;
+            display: flex;
+            align-items: center;
+            img{
+                width: 15px;
+                cursor: pointer;
+            }
+        }
+        .post-content{
+            display: none;
+        }
+        .post-content-edit{
+            font-size: 17px;
+            font-family: Montserrat;
+            font-weight: 500;
+            border-radius: 20px;
+            width: 100%;
+            border: 1px solid #E8E8E8;
+            background: #F7F7F7;
+            padding: 14px;
+            display: none;
+            resize: none;
+        }
+        .active{
+            display: flex;
+        }
+    }
+}
+.post-comments-info{
+    img{
+        width: 25px;
+    }
+    span{
+        color: #666;
+        font-family: Montserrat;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal;
+        margin-left: 5px;
+    }
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    display: flex;
+    padding: 5px 10px;
+    border-radius: 100px;
+    background: #d7d7d7;
+    margin-top: 20px;
+}
+
+.post-comments-container{
+    margin-top: 70px;
+    h1{
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 770px){
+    .post-container{
+        width: 85%;
+        padding: 20px 30px;
+        .post-title{
+            font-size: 14px;
+            margin-top: 30px;
+        }
+        .post-content{
+            margin-top: 20px;
+            font-size: 10px;
+        }
+        .user-info{
+            display: flex;
+        }
+        .date-message{
+            margin-left: 10px;
+            margin-right: 0;
+        }
+        margin-top: 50px;
+    }
+}
+
+
+//Страница редактирования поста
+
+.edit-post-title{
+    font-size: 28px;
+    font-family: Montserrat;
+    font-weight: 700;
+    border-radius: 20px;
+    border: 1px solid #E8E8E8;
+    background: #F7F7F7;
+    padding: 14px;
+    display: none;
 }

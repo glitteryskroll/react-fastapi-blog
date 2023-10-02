@@ -86,7 +86,7 @@ const Post = (props) => {
                     <h1>Комментарии</h1>
 
                     <form action="" onSubmit={setComment} className="comment-textarea">
-                        <textarea onChange={e=> setCommentText(e.target.value)} name="comments" id="" cols="30" rows="10" placeholder="Написать комментарий...">{commentText}</textarea>
+                        <textarea onChange={e=> setCommentText(e.target.value)} name="comments" id="" cols="30" rows="10" placeholder="Написать комментарий..." required>{commentText}</textarea>
                         <button className="comment-btn" type="submit">
                             Отправить
                         </button>
