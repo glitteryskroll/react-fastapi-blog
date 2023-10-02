@@ -1,6 +1,6 @@
 from fastapi import Depends
 from sqlalchemy.orm import Session
-from api.crud.user_repository import create_user, get_user_by_email, get_db, get_user_by_id
+from api.crud.user_repository import create_user, get_user_by_email, get_db, get_user_by_id, check_admin
 from api.crud.publications_repository import get_posts, get_post, delete_post, edit_post, add_post
 from middlewares import token_middleware, token_and_body_middleware
 
@@ -27,20 +27,27 @@ class EditPost(BaseModel):
 
 
 # Маршрут для удаления поста
-@router.delete("/posts/{post_id}")
-async def delete_post_route(post_id: int, data: dict = Depends(token_middleware), db: Session = Depends(get_db)):
-    post = get_post(db, post_id)
+@router.post("/delete/{post_id}")
+async def delete_post_route(post_id: int, data: dict = Depends(token_middleware)):
+    print(check_admin(data))
+    post = get_post(post_id)
     if post is None:
         raise HTTPException(status_code=404, detail="Пост не найден")
 
-    delete_post(db, post_id)
-    return {"message": "Пост успешно удален"}
+    if check_admin(data):
+        delete_post(post_id)
+        return {"message": "Пост успешно удален"}
+    else:
+        raise HTTPException(status_code=401, detail="Not admin")
 
 
 # Маршрут для получения данных поста для редактирования
-@router.get("/posts/{post_id}")
+@router.get("/get-post/{post_id}")
 async def get_post_for_edit_route(post_id: int):
+    db = next(get_db())
     post = get_post(post_id)
+    comments = len(db.query(Comment).filter(Comment.post_id == post_id).all())
+    post['comm_count'] = comments
     if post is None:
         raise HTTPException(status_code=404, detail="Пост не найден")
 
@@ -48,15 +55,15 @@ async def get_post_for_edit_route(post_id: int):
 
 
 # Маршрут для редактирования поста
-@router.put("/posts/{post_id}")
+@router.put("/update/{post_id}")
 async def edit_post_route(post_id: int, data: dict = Depends(token_and_body_middleware), db: Session = Depends(get_db)):
     post = EditPost.parse_obj(data['body'])
-    existing_post = get_post(db, post_id)
+    existing_post = get_post(post_id)
     if existing_post is None:
         raise HTTPException(status_code=404, detail="Пост не найден")
 
     # Здесь выполните логику редактирования поста в базе данных
-    edit_post(db, post_id, post)
+    edit_post(post_id, post)
 
     return {"message": "Пост успешно отредактирован"}
 
@@ -64,9 +71,7 @@ async def edit_post_route(post_id: int, data: dict = Depends(token_and_body_midd
 # Маршрут для получения информации о постах
 @router.post("/get-posts/{offset}")
 async def get_posts_route(offset: int, data: dict = Depends(token_middleware)):
-    print(offset)
-    offset = 0
-    posts = get_posts(offset)
+    posts, counter = get_posts(offset)
     for post in posts:
         post_id = post['post_id']
         db = next(get_database())
@@ -76,15 +81,16 @@ async def get_posts_route(offset: int, data: dict = Depends(token_middleware)):
             comment.avatar = user['avatar']
             comment.first_name = user['first_name']
             comment.last_name = user['last_name']
+        post['comm_count'] = len(comments)
         post['comments'] = comments
-    return posts
+    return posts, counter
 
 # Комментарии
 # Маршрут для создания комментария
 @router.post("/set-comment")
 async def create_comment(data: dict = Depends(token_and_body_middleware), db: Session = Depends(get_db)):
     comment_text = data['body']['comment_text']
-    user_id = get_user_by_email(data['token_data'])['user_id']
+    user_id = get_user_by_email(data['token_data']).user_id
     post_id = data['body']['post_id']
     new_comment = Comment(
         comment_text=comment_text,
@@ -107,6 +113,7 @@ async def get_comments_for_post(data: dict = Depends(token_and_body_middleware),
         comment.avatar = user['avatar']
         comment.first_name = user['first_name']
         comment.last_name = user['last_name']
+        comment.email = user['email']
     if not comments:
         raise HTTPException(status_code=404, detail="No comments found for this post")
     return comments

@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from passlib.context import CryptContext
 from datetime import timedelta, datetime
 from middlewares import token_middleware, token_and_body_middleware
-from api.crud.user_repository import create_user, get_user_by_email, get_db, get_user_by_id, delete_user, edit_user
+from api.crud.user_repository import create_user, get_user_by_email, get_db, get_user_by_id, delete_user, edit_user, get_user_posts
 
 import base64
 import jwt
@@ -37,9 +37,6 @@ class Token(BaseModel):
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
-def get_user(db: Session, email: str):
-    return db.query(User).filter(User.email == email).first()
-
 def create_access_token(data: dict, expires_delta: timedelta):
     to_encode = data.copy()
     expire = datetime.utcnow() + expires_delta
@@ -65,14 +62,6 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     return token_data
 
 
-
-def get_current_active_user(current_user: UserData = Depends(get_current_user)):
-    user = get_user(db_name, current_user.email)
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
-
-
 class UserCreate(BaseModel):
     email: str
     password: str
@@ -90,14 +79,18 @@ class UserLogin(BaseModel):
 @router.post("/registration")
 async def user_registration(user: UserCreate):
     password_hash = pwd_context.hash(user.password)
+    exist_user = get_user_by_email(user.email)
+    if exist_user:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="User with this email already exists"
+        )
     create_user(user.email, user.name, user.family, password_hash)
     return 0
-
 
 @router.post("/login")
 async def login_for_access_token(form_data: UserAuth):
     user = get_user_by_email(form_data.email).as_dict()
-    print(user)
     if user['ban'] == 1 or not user or not verify_password(form_data.password, user['password_hash']):
         return HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -107,14 +100,13 @@ async def login_for_access_token(form_data: UserAuth):
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user['email']}, expires_delta=access_token_expires
-
     )
     response = JSONResponse(content={"access_token": access_token, "token_type": "bearer"})
     response.set_cookie(key="access_token", value=access_token)
 
     return response
 
-@router.post("/info", response_class=HTMLResponse)
+@router.post("/info")
 async def read_root(token_data: dict = Depends(token_middleware)):
     user_data = get_user_by_email(token_data)
     user_data = user_data.as_dict()
@@ -132,26 +124,22 @@ async def read_root(token_data: dict = Depends(token_middleware)):
 
 @router.get("/avatar/{email}")
 async def get_image_file(email: str):
-    base64_data = get_user_by_email(email).avatar
-    binary_data = base64.b64decode(base64_data)
-
-    return Response(content=binary_data, media_type="image/png")
+    try:
+        email = email.split('?')[0]
+        base64_data = get_user_by_email(email).avatar
+        if len(base64_data) > 5:
+            binary_data = base64.b64decode(base64_data)
+            return Response(content=binary_data, media_type="image/png")
+        else:
+            return FileResponse('static/img/nophoto.png')
+    except:
+        return FileResponse('static/img/nophoto.png')
 
 
 @router.get("/profile", response_class=HTMLResponse)
 async def read_root(request: Request, token_data: dict = Depends(token_middleware), db: Session = Depends(get_db)):
     user_data = get_user_by_email(token_data)
-    user_posts = db.query(Post).filter(Post.user_id == user_data['user_id']).all()
-    for post in user_posts:
-        post_id = post.post_id
-        db = next(get_database())
-        comments = db.query(Comment).filter(Comment.post_id == post_id).all()
-        for comment in comments:
-            user = get_user_by_id(comment.user_id)
-            comment.avatar = user['avatar']
-            comment.first_name = user['first_name']
-            comment.last_name = user['last_name']
-        post.comments = comments
+    user_posts = get_user_posts(user_data)
 
     return templates.TemplateResponse("profile.html",{"request": request, "user_data": user_data, "posts": user_posts})
 
@@ -163,8 +151,11 @@ async def edit_profile(data: dict = Depends(token_and_body_middleware)):
     first_name = data['body']['name']
     last_name = data['body']['last_name']
     password = pwd_context.hash(data['body']['password'])
-    avatar = data['body']['avatar']
-    user = edit_user(emailA, emailB, first_name, last_name, password,avatar)
+    if 'avatar' in data['body']:
+        avatar = data['body']['avatar']
+    else:
+        avatar = ''
+    user = edit_user(emailA, emailB, first_name, last_name, password, avatar)
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return JSONResponse(content={"message": "Profile updated successfully"})

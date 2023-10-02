@@ -1,7 +1,11 @@
-db_host = 'localhost'
+db_host = 'postgres'
 db_name = 'blog'
 db_user = 'postgre'
-db_password = '12341234'
+db_password = '12341234' #При желании, можно сделать сложнее
 SECRET_KEY = "iIIg2ojzFyiA9IndOcz7QyRDAKbEbup7MsDS2pECy2eDBaobQdRqytR7FBVV7o3G"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 300
+admin_email= 'admin@gmail.com'
+admin_first_name = 'admin'
+admin_last_name = 'admin'
+admin_password = 'admin'

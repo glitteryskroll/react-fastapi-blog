@@ -3,8 +3,9 @@ from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.types import Numeric
 from datetime import datetime
-from configurations import db_host, db_name, db_user, db_password
+from configurations import db_host, db_name, db_user, db_password, admin_last_name,admin_first_name,admin_email,admin_password
 from sqlalchemy.orm import Session
+from passlib.context import CryptContext
 DATABASE_URL = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
 engine = create_engine(DATABASE_URL, pool_size=100000000)
 
@@ -62,3 +63,21 @@ def get_db():
         yield db
     finally:
         db.close()
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+# Создание администратора
+password = pwd_context.hash(admin_password)
+db = next(get_db())
+if not db.query(User).filter(User.email == admin_email).first():
+    print('Admin created')
+    new_user = User(
+        email=admin_email,
+        first_name=admin_first_name,
+        last_name=admin_last_name,
+        password_hash=password,
+        level=1
+    )
+    db.add(new_user)
+    db.commit()

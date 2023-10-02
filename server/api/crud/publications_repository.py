@@ -8,8 +8,20 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 # Функция для получения данных поста по его ID
-def get_post(db, post_id: int):
-    post = db.query(Post).filter(Post.post_id == post_id).first()
+def get_post(post_id: int):
+    connection = psycopg2.connect(
+        host=db_host,
+        database=db_name,
+        user=db_user,
+        password=db_password,
+        cursor_factory=psycopg2.extras.RealDictCursor
+    )
+
+    cursor = connection.cursor()
+
+    sql_query = f'''SELECT post_id, post_date, post_header, post_text, user_id, first_name, last_name, avatar, email FROM posts NATURAL JOIN users WHERE post_id = {post_id} LIMIT 10; '''
+    cursor.execute(sql_query)
+    post = cursor.fetchone()
     return post
 
 def add_post(email, post_header, post_text):
@@ -25,6 +37,8 @@ def add_post(email, post_header, post_text):
 
 # Функция для получения данных постов
 def get_posts(offset: int):
+    offset += -1
+    limit = 10
     connection = psycopg2.connect(
         host=db_host,
         database=db_name,
@@ -35,15 +49,20 @@ def get_posts(offset: int):
 
     cursor = connection.cursor()
 
-    sql_query = f'''SELECT post_id, post_date, post_header, post_text, user_id, first_name, last_name, avatar, email FROM posts NATURAL JOIN users OFFSET {offset} LIMIT 10; '''
+    sql_query = f'''SELECT post_id, post_date, post_header, post_text, user_id, first_name, last_name, avatar, email FROM posts NATURAL JOIN users order by post_date desc OFFSET {offset * limit} LIMIT 10 ; '''
     cursor.execute(sql_query)
     posts = cursor.fetchall()
 
-    return posts
+    sql_query = f'''SELECT count(*) FROM posts'''
+    cursor.execute(sql_query)
+    count = cursor.fetchone()
+
+    return posts, count
 
 
 # Функция для удаления поста по его ID
-def delete_post(db, post_id: int):
+def delete_post(post_id: int):
+    db = next(get_db())
     post = db.query(Post).filter(Post.post_id == post_id).first()
     post_comments = db.query(Comment).filter(Comment.post_id == post_id).all()
     if post_comments:
@@ -57,12 +76,14 @@ def delete_post(db, post_id: int):
     return False
 
 # Функция для редактирования поста по его ID
-def edit_post(db, post_id: int, post: object):
+def edit_post(post_id: int, post: object):
+    db = next(get_db())
     existing_post = db.query(Post).filter(Post.post_id == post_id).first()
     if existing_post:
         existing_post.post_text = post.post_text
-        existing_post.post_images_json = post.post_images
+        existing_post.post_header = post.post_header
         db.commit()
         db.refresh(existing_post)
         return existing_post
     return None
+

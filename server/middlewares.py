@@ -3,7 +3,6 @@ from configurations import SECRET_KEY, ALGORITHM
 from fastapi import Depends, HTTPException, Cookie, Body
 from sqlalchemy.orm import sessionmaker
 import jwt
-from jwt.exceptions import DecodeError as JWTError
 from datetime import datetime
 from db import User, engine, get_db
 
@@ -15,6 +14,7 @@ def token_middleware(access_token: str = Cookie(None)):
             payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
             email: str = payload.get("sub")
 
+            print(email)
             if email is None:
                 raise HTTPException(status_code=401, detail="Invalid token")
 
@@ -24,8 +24,7 @@ def token_middleware(access_token: str = Cookie(None)):
             db.commit()
             db.refresh(user)
             return email
-        except JWTError:
-            print(JWTError)
+        except Exception as ex:
             raise HTTPException(status_code=401, detail="Invalid token")
     else:
         raise HTTPException(status_code=401, detail="Invalid token")
