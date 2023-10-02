@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16rc1-alpine
+    container_name: blog_app
+    environment:
+      POSTGRES_USER: postgre
+      POSTGRES_PASSWORD: 12341234
+      POSTGRES_DB: blog
+    ports:
+      - "5432:5432"
+    networks:
+      - mynetwork
+
+  web:
+    build: client
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client/src:/app/src
+    environment:
+      - NODE_ENV=development
+    networks:
+      - mynetwork
+
+  fastapi:
+    build: server
+    image: fastapi-app
+    container_name: fastapi_container
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./server:/server
+    networks:
+      - mynetwork
+
+# Другие сервисы могут быть добавлены здесь
+
+networks:
+  mynetwork:
+    driver: bridge
