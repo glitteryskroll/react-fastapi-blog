@@ -18,7 +18,6 @@ const FeedApp = (props) => {
   async function setUser() {
     const data = await profile();
     userStore.setUserData(data);
-    console.log(userStore.getUserData);
     setLoading(false);
   }
   useEffect(() => {
@@ -27,7 +26,6 @@ const FeedApp = (props) => {
 
   useEffect(() => {
     if (userData){
-      console.log('user data', userData);
       setLoading(false);
     };
     // setLoading(false);

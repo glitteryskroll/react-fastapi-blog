@@ -30,8 +30,9 @@ const UserSettings = () => {
           }
     };
 
-    const editUserProfile = (e) =>{
+    const editUserProfile = async (e) =>{
         
+        e.preventDefault();
         let imageFile = '';
         if (avatarUrl != avatar){
             imageFile = avatar.split(',')[1];
@@ -39,11 +40,12 @@ const UserSettings = () => {
         else{
             imageFile = false;
         }
-        updateUser(name, lastName, email, password, imageFile);
+        await updateUser(name, lastName, email, password, imageFile);
+        window.location.reload();
     }
 
-    const deleteUserProfile = (e) =>{
-        deleteUser();
+    const deleteUserProfile = async (e) =>{
+        await deleteUser();
         window.location.reload();
     }
 

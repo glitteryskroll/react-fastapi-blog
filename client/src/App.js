@@ -1,16 +1,9 @@
 // src/App.js
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, useNavigate, redirect, Navigate  } from 'react-router-dom';
-import Auth from './pages/Auth';  // Импортируем компонент страницы аутентификации
-import Home from './pages/Home';
-import FeedApp from './pages/Feed';
-import Registration from './pages/Registration';
 import config from './config';
-import Settings from './pages/Settings';
 import { Context } from './index';
 import { profile } from './api/UserApi';
-import CreatePost from './pages/CreatePost';
-import Post from './pages/Post';
 import { ADMIN_ROUTES, AUTH_ROUTES, NOT_AUTH_ROUTES } from './utils/routes';
 import { AUTH_ROUTE } from './utils/consts';
 
@@ -23,8 +16,10 @@ const App = () => {
   const [admin, setAdmin] = useState(false);
   async function setUser() {
     const data = await profile();
-    userStore.setUserData(data);
-    setAuth(true);
+    if (data){
+      userStore.setUserData(data);
+      setAuth(true);
+    }
     try{
       if (data.level == 1){
         setAdmin(true)
@@ -34,7 +29,6 @@ const App = () => {
     }
     setLoading(false);
   }
-  console.log(admin)
   useEffect(() => {
     setUser();
   }, []);
@@ -57,7 +51,7 @@ const App = () => {
               )) 
             }
             {
-              admin ?
+            admin ?
               ADMIN_ROUTES.map((route, index) =>(
                 <Route path={route.path} key={index} element={<route.page admin={admin}></route.page>} />
               ))

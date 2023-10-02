@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { getAvatarUrl } from '../api/UserApi';
 import { formatDate } from '../utils/functions';
 import { Link } from 'react-router-dom';
-import { AUTH_ROUTE } from '../utils/consts';
+import { AUTH_ROUTE, EDIT_POST } from '../utils/consts';
 import { deletePost } from '../api/PostApi';
 import { Context } from '../index';
 
@@ -13,6 +13,9 @@ const Blog = (props) => {
     const admin = props.admin;
     const update = props.update;
     const avatarUrl = getAvatarUrl(post.email);
+    const linkToPost = '/post/' + post.post_id
+    const editPost = '/editpost/' + post.post_id
+    
     const removePost = async (event) =>{
         event.preventDefault();
         await openSettings(event);
@@ -26,7 +29,7 @@ const Blog = (props) => {
         document.getElementById('settings-post-container-' + post.post_id).classList.toggle("active")
     }
   return (
-    <Link to={'/post/' + post.post_id}>
+    <Link to={linkToPost}>
     <div className="feed-item-container">
         <div className="feed-item" >
             <div className="feed-item-info">
@@ -60,7 +63,7 @@ const Blog = (props) => {
         </div>
         {admin ?
             <div className="settings-post" id={'settings-post-container-' + post.post_id}>
-                <Link to={AUTH_ROUTE}className='edit'><span >Редактировать</span></Link>
+                <Link to={editPost}className='edit'><span >Редактировать</span></Link>
                 <button className="delete" onClick={removePost}>Удалить</button>
             </div>
             :

@@ -42,7 +42,7 @@ const BlogsFeed = (props) => {
     <section className="feed-container">
       
       
-      <ul class="pagination-container">
+      <ul className="pagination-container">
         <div>
           Страница {currentPage}
         </div>

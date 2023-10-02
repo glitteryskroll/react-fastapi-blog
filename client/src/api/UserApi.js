@@ -19,7 +19,7 @@ export const profile = async () => {
 }
 
 export const getAvatarUrl = (email) =>{
-    const avatarImage = apiUrl + '/user/avatar/' + email
+    const avatarImage = apiUrl + '/user/avatar/' + email +'?' + new Date().getTime();
     return avatarImage
 }
 
@@ -97,6 +97,12 @@ export const registerUser = async (formData) => {
           return true
         }
         else{
+          if (response.status == 409){
+            alert('Пользователь с таким email уже имеется');
+          }
+          else{
+            alert(response.status)
+          }
           return false
         }
     })

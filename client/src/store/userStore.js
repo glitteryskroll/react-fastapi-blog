@@ -8,6 +8,10 @@ class UserStore {
     this._user = {}
   }
 
+  clean(){
+    this._isAuth = false;
+    this._user = {}
+  }
   setUserData(userData) {
     this._user = userData;
     this._isAuth = true;

@@ -35,7 +35,6 @@ const Registration = (props) => {
         e.preventDefault();
         // Send the registration data to the backend
         const result = await registerUser(formData);
-        console.log(result);
         if (result){
             window.location.href = AUTH_ROUTE;
         }
